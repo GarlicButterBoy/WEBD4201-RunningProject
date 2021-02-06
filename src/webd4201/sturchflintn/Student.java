@@ -1,5 +1,6 @@
 package webd4201.sturchflintn;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.Vector;
 
@@ -199,5 +200,10 @@ public class Student extends User
                 "Currently in " + getYear() + " year of " + getProgramDescription() + " " + getProgramCode() + "\n" +
                 "Enrolled: " + getEnrolDate() +
                 '}';
+    }
+
+    public static Connection initialize()
+    {
+
     }
 }
