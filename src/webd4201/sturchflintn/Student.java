@@ -202,8 +202,64 @@ public class Student extends User
                 '}';
     }
 
-    public static Connection initialize()
+    /**
+     * Method that connects the DB
+     * @param c     The connection String
+     */
+    public static void initialize(Connection c)
     {
+        StudentDA.initialize(c);
+    }
 
+    /**
+     * Method to terminate the connection to the DB
+     */
+    public static void terminate()
+    {
+        StudentDA.terminate();
+    }
+
+    /**
+     * Method to retrieve a student from the DB
+     * @param id        The id being searched for in the DB
+     * @return Student  A record from the DB
+     * @throws NotFoundException
+     */
+    public static Student retrieve(long id) throws NotFoundException
+    {
+        return StudentDA.retrieve(id);
+    }
+
+    /**
+     * Creates a new Student Objkect
+     * @param aStudent    Object containing the relevant data
+     * @return aStudent   Object containing the relevant data
+     * @throws DuplicateException
+     */
+    public static boolean create(Student aStudent) throws DuplicateException
+    {
+        return StudentDA.create(aStudent);
+    }
+
+    /**
+     * Updates an existing record
+     * @param aStudent  Object containing the relevant data
+     * @return          number of rows affected
+     * @throws NotFoundException
+     */
+    public static int update(Student aStudent) throws NotFoundException
+    {
+        return StudentDA.update(aStudent);
+    }
+
+    /**
+     * Deletes an existing record
+     * @param aStudent  Object containing the relevant data
+     * @return          number of rows affected
+     * @throws NotFoundException
+     */
+    public static int delete(Student aStudent) throws NotFoundException
+    {
+        return  StudentDA.delete(aStudent);
     }
 }
