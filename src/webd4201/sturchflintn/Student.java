@@ -232,34 +232,31 @@ public class Student extends User
 
     /**
      * Creates a new Student Objkect
-     * @param aStudent    Object containing the relevant data
      * @return aStudent   Object containing the relevant data
      * @throws DuplicateException
      */
-    public static boolean create(Student aStudent) throws DuplicateException
+    public boolean create() throws DuplicateException
     {
-        return StudentDA.create(aStudent);
+        return StudentDA.create(this);
     }
 
     /**
      * Updates an existing record
-     * @param aStudent  Object containing the relevant data
      * @return          number of rows affected
      * @throws NotFoundException
      */
-    public static int update(Student aStudent) throws NotFoundException
+    public  int update() throws NotFoundException
     {
-        return StudentDA.update(aStudent);
+        return StudentDA.update(this);
     }
 
     /**
      * Deletes an existing record
-     * @param aStudent  Object containing the relevant data
      * @return          number of rows affected
      * @throws NotFoundException
      */
-    public static int delete(Student aStudent) throws NotFoundException
+    public int delete() throws NotFoundException
     {
-        return  StudentDA.delete(aStudent);
+        return  StudentDA.delete(this);
     }
 }

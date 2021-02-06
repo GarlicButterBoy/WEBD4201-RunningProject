@@ -142,7 +142,7 @@ public class StudentDA
                 }
                 catch (InvalidUserDataException e)
                 {
-                    System.out.println("Record for " + m_id + " contains an invalid phone number.  Verify and correct.");
+                    System.out.println("Record for " + m_id + " contains an invalid ID.  Verify and correct.");
                 }
 
             }
@@ -276,7 +276,7 @@ public class StudentDA
         // see if this customer already exists in the database
         try
         {
-            retrieve(id);  //used to determine if record exists for the passed Customer
+            Student.retrieve(id);  //used to determine if record exists for the passed Customer
             // if found, execute the SQL update statement
             records = aStatement.executeUpdate(sqlDeleteStudent);
             records = aStatement.executeUpdate(sqlDeleteUser);
@@ -336,7 +336,7 @@ public class StudentDA
         // NotFoundException is thrown by find method
         try
         {
-            retrieve(id);  //determine if there is a student record to be updated
+            Student.retrieve(id);  //determine if there is a student record to be updated
             // if found, execute the SQL update statement
             records = aStatement.executeUpdate(sqlUpdateUsers);
             records = aStatement.executeUpdate(sqlUpdateStudents);
