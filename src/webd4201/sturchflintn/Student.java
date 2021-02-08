@@ -1,6 +1,7 @@
 package webd4201.sturchflintn;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
 
@@ -89,16 +90,19 @@ public class Student extends User
      */
     public Student(long id, String password, String firstName, String lastName, String emailAddress,
                    Date lastAccess, Date enrolDate, boolean enabled, char type, String programCode,
-                   String programDescription, int year) throws InvalidNameException, InvalidIdException, InvalidPasswordException, InvalidUserDataException {
+                   String programDescription, int year) throws InvalidUserDataException
+    {
         this(id, password, firstName, lastName, emailAddress, lastAccess, enrolDate,
                 enabled, type, programCode, programDescription, year, new Vector<>());
+        //System.out.println("ID: " + id);
     }
     /**
      * Default Constructor uses the parent class constructor then uses the student defaults to build a basic instance
      */
-    public Student() throws InvalidNameException, InvalidIdException, InvalidPasswordException, InvalidUserDataException {
-        this(User.DEFAULT_ID, User.DEFAULT_PASSWORD, User.DEFAULT_FIRST_NAME, User.DEFAULT_LAST_NAME, User.DEFAULT_EMAIL_ADDRESS,
-                new Date(), new Date(), User.DEFAULT_ENABLED_STATUS, User.DEFAULT_TYPE,  DEFAULT_PROGRAM_CODE,
+    public Student() throws InvalidNameException, InvalidIdException, InvalidPasswordException, InvalidUserDataException
+    {
+        this(DEFAULT_ID, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL_ADDRESS,
+                new Date(), new Date(), DEFAULT_ENABLED_STATUS, DEFAULT_TYPE,  DEFAULT_PROGRAM_CODE,
                 DEFAULT_PROGRAM_DESCRIPTION, DEFAULT_YEAR, new Vector<>());
     }
 
@@ -199,7 +203,7 @@ public class Student extends User
                 getFirstName() + " " + getLastName() + "(" + getId() + ")" + "\n" +
                 "Currently in " + getYear() + " year of " + getProgramDescription() + " " + getProgramCode() + "\n" +
                 "Enrolled: " + getEnrolDate() +
-                '}';
+                "\n}";
     }
 
     /**
@@ -225,8 +229,7 @@ public class Student extends User
      * @return Student  A record from the DB
      * @throws NotFoundException
      */
-    public static Student retrieve(long id) throws NotFoundException
-    {
+    public static Student retrieve(long id) throws NotFoundException, SQLException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         return StudentDA.retrieve(id);
     }
 
@@ -235,8 +238,7 @@ public class Student extends User
      * @return aStudent   Object containing the relevant data
      * @throws DuplicateException
      */
-    public boolean create() throws DuplicateException
-    {
+    public boolean create() throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         return StudentDA.create(this);
     }
 
@@ -245,8 +247,7 @@ public class Student extends User
      * @return          number of rows affected
      * @throws NotFoundException
      */
-    public  int update() throws NotFoundException
-    {
+    public  int update() throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         return StudentDA.update(this);
     }
 
@@ -255,8 +256,7 @@ public class Student extends User
      * @return          number of rows affected
      * @throws NotFoundException
      */
-    public int delete() throws NotFoundException
-    {
+    public int delete() throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         return  StudentDA.delete(this);
     }
 }

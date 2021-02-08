@@ -190,13 +190,13 @@ public class User implements CollegeInterface {
      */
     public void setId(long id) throws InvalidIdException
     {
-        if (id >= MINIMUM_ID_NUMBER && id <= MAXIMUM_ID_NUMBER)
+        if (verifyId(id))
         {
             this.id = id;
         }
         else
         {
-            throw new InvalidIdException(id + " is not a valid ID number.");
+            throw new InvalidIdException(id + " must be the appropriate length (9 character).");
         }
 
     }
@@ -412,7 +412,7 @@ public class User implements CollegeInterface {
     {
         boolean flag = true;
 
-        if (id > MAXIMUM_ID_NUMBER || id < MINIMUM_ID_NUMBER)
+        if (Long.toString(id).length() != ID_NUMBER_LENGTH)
         {
             flag = false;
         }

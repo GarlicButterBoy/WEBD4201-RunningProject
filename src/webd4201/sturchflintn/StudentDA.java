@@ -6,10 +6,7 @@
  */
 package webd4201.sturchflintn;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
@@ -78,9 +75,10 @@ public class StudentDA
     private static Vector<Mark> marks;
 
     //Class Constant
+    /**
+     * Updates the date format to be the same everywhere
+     */
     private static final SimpleDateFormat SQL_DF = new SimpleDateFormat("yyyy-MM-dd");
-
-
 
     // establish the database connection
     /**
@@ -113,42 +111,55 @@ public class StudentDA
 
     /**
      * This method checks the id against all in the DB
-     * @param m_id      Checks the id of the potential new user against all existing users
+     * @param id      Checks the id of the potential new user against all existing users
      * @return Student  Object form of the data collected for a student
      * @throws NotFoundException
      */
-    public static Student retrieve(long m_id) throws NotFoundException
-    { // retrieve Customer and Boat data
-        aStudent = null;
-        // define the SQL query statement using the phone number key
-        String sqlQuery = "SELECT id " +
-                " FROM users " +
-                " WHERE id = '" + m_id +"'" ;
+    public static Student retrieve(long id) throws NotFoundException, SQLException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException { // retrieve Customer and Boat data
 
+        aStudent = new Student();
+        // define the SQL query statement using the phone number key
+        PreparedStatement sqlQuery = aConnection.prepareStatement("SELECT users.id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type, program_code, program_description, year FROM users, students WHERE users.id = students.id AND students.id = (?);");
+        System.out.println(sqlQuery);
+        sqlQuery.setLong(1, id);
         // execute the SQL query statement
         try
         {
-            ResultSet rs = aStatement.executeQuery(sqlQuery);
+            ResultSet rs = sqlQuery.executeQuery();
             // next method sets cursor & returns true if there is data
             boolean gotIt = rs.next();
             if (gotIt)
             {	// extract the data
-                m_id = rs.getLong("id");
+                id = rs.getLong("id");
+                password = rs.getString("password");
+                firstName = rs.getString("first_name");
+                lastName = rs.getString("last_name");
+                emailAddress = rs.getString("email_address");
+                lastAccess = rs.getDate("last_access");
+                enrolDate = rs.getDate("enrol_date");
+                enabled = rs.getBoolean("enabled");
+                type = 's';
+                programCode = rs.getString("program_code");
+                programDescription = rs.getString("program_description");
+                year = rs.getInt("year");
+                marks = new Vector<Mark>();
 
                 // create Student
                 try
                 {
-                    aStudent = new Student(m_id, password, firstName, lastName, emailAddress, lastAccess, enrolDate, enabled, type, programCode, programDescription, year, marks);
+                   // System.out.println(id + " " + password + " " + firstName + " " + lastName + " " + emailAddress + " " + lastAccess + " " + enrolDate + " " + enabled + " " + type + " " + programCode + " " + programDescription + " " + year + " " + marks );
+                    aStudent = new Student(id, password, firstName, lastName, emailAddress, lastAccess, enrolDate, enabled, type, programCode, programDescription, year);
+                   // aStudent = new Student();
                 }
                 catch (InvalidUserDataException e)
                 {
-                    System.out.println("Record for " + m_id + " contains an invalid ID.  Verify and correct.");
+                    System.out.println("Record for " + id + " contains an invalid ID.  Verify and correct.");
                 }
 
             }
             else	// nothing was retrieved
             {
-                throw (new NotFoundException("Problem retrieving Student record, ID " + m_id +" does not exist in the system."));
+                throw (new NotFoundException("Problem retrieving Student record, ID " + id +" does not exist in the system."));
             }
             rs.close();
         }
@@ -211,8 +222,7 @@ public class StudentDA
      * @return inserted     a boolean to tell if the insert passed/failed
      * @throws DuplicateException
      */
-    public static boolean create(Student aStudent) throws DuplicateException
-    {
+    public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         boolean inserted = false; //insertion success flag
         // retrieve the student attribute values
         id = aStudent.getId();
@@ -231,13 +241,14 @@ public class StudentDA
 
         // create the SQL insert statement using attribute values
         String sqlInsertUser = "INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
-                "VALUES (" + id + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + lastAccess
+                "VALUES ('" + id + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + lastAccess
                 + "', '" + enrolDate + "', '" + enabled + "', '" + type
                 + "');";
 
-        String sqlInsertStudent = "INSERT INTO Students (id, program_code, program_description, year) " +
-                "VALUE (" + id + "', '" + programCode + "', '" + programDescription + "', '" + year +"');'";
-
+        String sqlInsertStudent = "INSERT INTO students (id, program_code, program_description, year) " +
+                "VALUES ('" + id + "', '" + programCode + "', '" + programDescription + "', '" + year +"');";
+        //System.out.println(sqlInsertStudent);
+        //System.out.println(sqlInsertUser);
         // see if this customer already exists in the database
         try
         {
@@ -245,7 +256,7 @@ public class StudentDA
             throw (new DuplicateException("Problem with creating Student record, the Student ID: " + id +"; already exists in the system."));
         }
         // if NotFoundException, add customer to database
-        catch(DuplicateException | NotFoundException e)
+        catch(DuplicateException | NotFoundException | SQLException e)
         {
             try
             {  // execute the SQL update statement
@@ -264,8 +275,7 @@ public class StudentDA
      * @return records      number of records changed
      * @throws NotFoundException
      */
-    public static int delete(Student aStudent) throws NotFoundException
-    {
+    public static int delete(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         int records = 0;
         // retrieve the id (key)
         id = aStudent.getId();
@@ -276,7 +286,7 @@ public class StudentDA
         // see if this customer already exists in the database
         try
         {
-            Student.retrieve(id);  //used to determine if record exists for the passed Customer
+            retrieve(id);  //used to determine if record exists for the passed Customer
             // if found, execute the SQL update statement
             records = aStatement.executeUpdate(sqlDeleteStudent);
             records = aStatement.executeUpdate(sqlDeleteUser);
@@ -295,8 +305,7 @@ public class StudentDA
      * @return records      number of records updated
      * @throws NotFoundException
      */
-    public static int update(Student aStudent) throws NotFoundException
-    {
+    public static int update(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
         int records = 0;  //records updated in method
 
         // retrieve the student argument attribute values
@@ -336,7 +345,7 @@ public class StudentDA
         // NotFoundException is thrown by find method
         try
         {
-            Student.retrieve(id);  //determine if there is a student record to be updated
+            retrieve(id);  //determine if there is a student record to be updated
             // if found, execute the SQL update statement
             records = aStatement.executeUpdate(sqlUpdateUsers);
             records = aStatement.executeUpdate(sqlUpdateStudents);
