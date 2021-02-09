@@ -7,7 +7,7 @@ package webd4201.sturchflintn;  //change this to make the class part of your pac
  * @since 1.0
  */
 import java.util.*;
-
+/*
 public class Main {
 
     public static void main(String[] args) throws InvalidIdException, InvalidPasswordException, InvalidNameException {
@@ -67,7 +67,8 @@ public class Main {
                 long newId = -100123456L;
                 System.out.println("\nTry to set the id for student1 to an invalid number: " + newId + ".");
                 student1.setId(newId);
-            }catch(InvalidIdException iie)
+            }
+            catch(InvalidIdException iie)
             {
                 System.out.println(iie.getMessage());
             }
@@ -133,3 +134,4 @@ public class Main {
     }
 
 }
+*/

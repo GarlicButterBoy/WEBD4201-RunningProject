@@ -120,7 +120,7 @@ public class StudentDA
         aStudent = new Student();
         // define the SQL query statement using the phone number key
         PreparedStatement sqlQuery = aConnection.prepareStatement("SELECT users.id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type, program_code, program_description, year FROM users, students WHERE users.id = students.id AND students.id = (?);");
-        System.out.println(sqlQuery);
+        //System.out.println(sqlQuery);
         sqlQuery.setLong(1, id);
         // execute the SQL query statement
         try
@@ -153,7 +153,8 @@ public class StudentDA
                 }
                 catch (InvalidUserDataException e)
                 {
-                    System.out.println("Record for " + id + " contains an invalid ID.  Verify and correct.");
+
+                    System.out.println(e.getMessage() + id + " contains an invalid ID.  Verify and correct.");
                 }
 
             }

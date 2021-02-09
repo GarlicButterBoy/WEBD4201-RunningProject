@@ -31,7 +31,7 @@ public class User implements CollegeInterface {
     /**
      * The maximum password length allowed
      */
-    public static final byte MAXIMUM_PASSWORD_LENGTH = 20;
+    public static final byte MAXIMUM_PASSWORD_LENGTH = 40;
     /**
      * Default first name for a default constructor
      */
@@ -188,8 +188,12 @@ public class User implements CollegeInterface {
      * @param id            must be between a minimum and maximum
      * @exception InvalidIdException  is thrown if anything fails setting the ID
      */
-    public void setId(long id) throws InvalidIdException
+    public void setId(long id) //throws InvalidIdException
     {
+
+        this.id = id;
+
+        /*
         if (verifyId(id))
         {
             this.id = id;
@@ -198,7 +202,7 @@ public class User implements CollegeInterface {
         {
             throw new InvalidIdException(id + " must be the appropriate length (9 character).");
         }
-
+*/
     }
     /**
      * Method to set the password
