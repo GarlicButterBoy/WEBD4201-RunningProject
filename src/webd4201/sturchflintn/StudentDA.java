@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class StudentDA
 {
-    static Vector<Student> students = new Vector<Student>();	// contains student references
+    static Vector<Student> students = new Vector<>();	// contains student references
     static Student aStudent;
 
     // declare variables for the database connection
@@ -92,7 +92,7 @@ public class StudentDA
             aStatement=aConnection.createStatement();
         }
         catch (SQLException e)
-        { System.out.println(e);	}
+        { System.out.println(e.getMessage());	}
     }
 
     // close the database connection
@@ -106,7 +106,7 @@ public class StudentDA
             aStatement.close();
         }
         catch (SQLException e)
-        { System.out.println(e);	}
+        { System.out.println(e.getMessage());	}
     }
 
     /**
@@ -119,7 +119,7 @@ public class StudentDA
 
         aStudent = new Student();
         // define the SQL query statement using the phone number key
-        PreparedStatement sqlQuery = aConnection.prepareStatement("SELECT users.id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type, program_code, program_description, year FROM users, students WHERE users.id = students.id AND students.id = (?);");
+        PreparedStatement sqlQuery = aConnection.prepareStatement("SELECT users.id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type, program_code, program_description, year FROM users, students WHERE users.id = students.id AND students.id = ?;");
         //System.out.println(sqlQuery);
         sqlQuery.setLong(1, id);
         // execute the SQL query statement
@@ -142,7 +142,7 @@ public class StudentDA
                 programCode = rs.getString("program_code");
                 programDescription = rs.getString("program_description");
                 year = rs.getInt("year");
-                marks = new Vector<Mark>();
+                marks = new Vector<>();
 
                 // create Student
                 try
@@ -166,7 +166,7 @@ public class StudentDA
         }
         catch (SQLException e)
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return aStudent;
@@ -213,7 +213,7 @@ public class StudentDA
             rs.close();
         }
         catch (SQLException e)
-        { System.out.println(e);}
+        { System.out.println(e.getMessage());}
         return students;
     }
 
@@ -221,9 +221,9 @@ public class StudentDA
      * Method accepts a student object to be used to INSERT into the DB
      * @param aStudent      an object that contains student details
      * @return inserted     a boolean to tell if the insert passed/failed
-     * @throws DuplicateException
+     * @throws InvalidUserDataException
      */
-    public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException {
         boolean inserted = false; //insertion success flag
         // retrieve the student attribute values
         id = aStudent.getId();
@@ -239,17 +239,41 @@ public class StudentDA
         programDescription = aStudent.getProgramDescription();
         year = aStudent.getYear();
         marks = aStudent.getMarks();
-
+        java.sql.Date lastAccessDate = new java.sql.Date(lastAccess.getTime());
+        java.sql.Date ogEnrolDate = new java.sql.Date(enrolDate.getTime());
         // create the SQL insert statement using attribute values
         String sqlInsertUser = "INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
                 "VALUES ('" + id + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + lastAccess
                 + "', '" + enrolDate + "', '" + enabled + "', '" + type
-                + "');";
+               + "');";
+        //Prepare the user table statement
+        PreparedStatement sqlUserQuery = aConnection.prepareStatement("INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        //Prepare the student table statement
+        PreparedStatement sqlStudentQuery = aConnection.prepareStatement("INSERT INTO students (id, program_code, program_description, year) " +
+                "VALUES (?, ?, ?, ?);");
+
+        //Set the appropriate values for the student prepared statement
+        sqlUserQuery.setLong(1, id);
+        sqlUserQuery.setString(2, password);
+        sqlUserQuery.setString(3, firstName);
+        sqlUserQuery.setString(4, lastName);
+        sqlUserQuery.setString(5, emailAddress);
+        sqlUserQuery.setDate(6, lastAccessDate);
+        sqlUserQuery.setDate(7, ogEnrolDate);
+        sqlUserQuery.setBoolean(8, enabled);
+        sqlUserQuery.setString(9, String.valueOf(type));
+        //Set the appropriate values for the student prepared statement
+        sqlStudentQuery.setLong(1, id);
+        sqlStudentQuery.setString(2, programCode);
+        sqlStudentQuery.setString(3, programDescription);
+        sqlStudentQuery.setInt(4, year);
+
 
         String sqlInsertStudent = "INSERT INTO students (id, program_code, program_description, year) " +
                 "VALUES ('" + id + "', '" + programCode + "', '" + programDescription + "', '" + year +"');";
-        //System.out.println(sqlInsertStudent);
-        //System.out.println(sqlInsertUser);
+      //  System.out.println(sqlInsertStudent);
+      //  System.out.println(sqlInsertUser);
         // see if this customer already exists in the database
         try
         {
@@ -261,11 +285,22 @@ public class StudentDA
         {
             try
             {  // execute the SQL update statement
-                inserted = aStatement.execute(sqlInsertUser);
-                inserted = aStatement.execute(sqlInsertStudent);
+                //Execute the statement
+              // System.out.println(sqlStudentQuery);
+
+                //System.out.println(sqlUserQuery);
+                int rs = sqlUserQuery.executeUpdate();
+                int rs1 = sqlStudentQuery.executeUpdate();
+                if (rs > 0 && rs1 > 0)
+                {
+                    inserted = true;
+                }
+
+               // inserted = aStatement.execute(sqlInsertUser);
+               // inserted = aStatement.execute(sqlInsertStudent);
             }
             catch (SQLException ee)
-            { System.out.println(ee);	}
+            { System.out.println(ee.getMessage());	}
         }
         return inserted;
     }
@@ -296,7 +331,7 @@ public class StudentDA
             throw new NotFoundException("Student with id " + id
                     + " cannot be deleted, does not exist.");
         }catch (SQLException e)
-        { System.out.println(e);	}
+        { System.out.println(e.getMessage());	}
         return records;
     }
 
@@ -338,10 +373,11 @@ public class StudentDA
         String sqlUpdateStudents = "UPDATE students " +
                 "SET program_code = '" + programCode + "', " +
                 "program_description = '" + programDescription + "', " +
-                "year = '" + year + "', " +
+                "year = '" + year + "' " +
                 "WHERE id = '" + id + "';";
 
-
+       // System.out.println(sqlUpdateStudents);
+       // System.out.println(sqlUpdateUsers);
         // see if this customer exists in the database
         // NotFoundException is thrown by find method
         try
@@ -355,7 +391,7 @@ public class StudentDA
             throw new NotFoundException("Student with id " + id
                     + " cannot be updated, does not exist in the system.");
         }catch (SQLException e)
-        { System.out.println(e);}
+        { System.out.println(e.getMessage());}
         return records;
     }
 }

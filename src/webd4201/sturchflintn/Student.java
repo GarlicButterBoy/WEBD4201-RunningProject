@@ -8,7 +8,7 @@ import java.util.Vector;
 /**
  * Student class extends the user class and acts as the Student user type
  * @author Nick Sturch-Flint - 100303769
- * @version 1.0 (Janaury 8th, 2021)
+ * @version 1.0 (January 8th, 2021)
  * @since January 8th, 2021
  */
 public class Student extends User
@@ -99,7 +99,7 @@ public class Student extends User
     /**
      * Default Constructor uses the parent class constructor then uses the student defaults to build a basic instance
      */
-    public Student() throws InvalidNameException, InvalidIdException, InvalidPasswordException, InvalidUserDataException
+    public Student() throws InvalidUserDataException
     {
         this(DEFAULT_ID, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL_ADDRESS,
                 new Date(), new Date(), DEFAULT_ENABLED_STATUS, DEFAULT_TYPE,  DEFAULT_PROGRAM_CODE,
@@ -227,36 +227,36 @@ public class Student extends User
      * Method to retrieve a student from the DB
      * @param id        The id being searched for in the DB
      * @return Student  A record from the DB
-     * @throws NotFoundException
+     * @throws NotFoundException  throws an exception if the user cannot be found, or other implicit data errors
      */
-    public static Student retrieve(long id) throws NotFoundException, SQLException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public static Student retrieve(long id) throws NotFoundException, SQLException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException {
         return StudentDA.retrieve(id);
     }
 
     /**
-     * Creates a new Student Objkect
+     * Creates a new Student Object
      * @return aStudent   Object containing the relevant data
-     * @throws DuplicateException
+     * @throws InvalidUserDataException  throws an exception if the user data entry is invalid
      */
-    public boolean create() throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public boolean create() throws InvalidUserDataException, DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, SQLException {
         return StudentDA.create(this);
     }
 
     /**
      * Updates an existing record
      * @return          number of rows affected
-     * @throws NotFoundException
+     * @throws NotFoundException    throws an exception if the user cannot be found
      */
-    public  int update() throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public  int update() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException {
         return StudentDA.update(this);
     }
 
     /**
      * Deletes an existing record
      * @return          number of rows affected
-     * @throws NotFoundException
+     * @throws NotFoundException   throws an exception if the user cannot be found
      */
-    public int delete() throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public int delete() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException {
         return  StudentDA.delete(this);
     }
 }

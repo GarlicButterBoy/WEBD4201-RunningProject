@@ -1,8 +1,5 @@
 package webd4201.sturchflintn;
 
-import webd4201.sturchflintn.DatabaseConnect;
-import webd4201.sturchflintn.Student;
-
 import java.sql.Connection;
 /**
  * Main method to test the new User class created for lab 6
@@ -40,7 +37,7 @@ public class Lab2Tester {
 	            // initialize the database (i.e. create a database connection)
 	            c = DatabaseConnect.initialize();
 	            Student.initialize(c);
-	            
+
 	            try // attempt to get a Student that does NOT exist, throws Exception
 	            {
 	            	System.out.println("\nAttempt to retrieve a student that does not exist (Id: " + possibleId + ")");
@@ -61,58 +58,74 @@ public class Lab2Tester {
 	            }
 	            catch(NotFoundException e)
 	            {	System.out.println(e.getMessage());}
-	            
+
 	            try
 	            {
-	            	System.out.println("\nAttempt to insert a new student record for " 
-	            						+ mainStudent.getFirstName() + " " + mainStudent.getLastName() 
+	            	System.out.println("\nAttempt to insert a new student record for "
+	            						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
 	            						+ "(Id: " + mainStudent.getId()+")");
 	            	mainStudent.create();
+	            	mainStudent.dump();
 	                System.out.println("Student record added to the database.\n");
 	            }
 	            catch(DuplicateException e)
 	            {	System.out.println(e);}
-	            
+
 	            try
 	            {
-	            	System.out.println("\nChange the student object and attempt to update the student record for " 
-	            						+ mainStudent.getFirstName() + " " + mainStudent.getLastName() 
+	            	System.out.println("\nChange the student object and attempt to update the student record for "
+	            						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
 	            						+ "(Id: " + mainStudent.getId() +")");
 	            	mainStudent.setPassword("newpassword");
 	            	mainStudent.setProgramCode("RPN");
 	            	mainStudent.setProgramDescription("Registered Practical Nurse");
-	            	
+
 	            	mainStudent.update();
+	            	mainStudent.dump();
 	                System.out.println("Student record updated in the database.\n");
 	            }
 	            catch(NotFoundException e)
 	            {	System.out.println(e);}
-	            
-	            System.out.println("\nStudents are encouraged to comment out the folowing try...catch block to"
-	            		+ " verify the new record exists in pgAdmin by running the \"SELECT * FROM Students;\" command "); 
-		            	
-	            try // now, attempt to delete the new Student
-	            {
-	            	System.out.println("\nAttempt to delete the new student record for " 
-	            	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName() 
-   						+ "(Id: " + mainStudent.getId() + ")");
-	        	   		mainStudent.delete();
-	        	   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
-	            }
-	            catch(NotFoundException e)
-	                    {	System.out.println(e);}
 
-	            try // now, try to find the deleted Student
-	            {
-	            	possibleId = 100222222L;
-	                mainStudent = Student.retrieve(possibleId);
-	                mainStudent.dump();
-	                mainStudent.delete();
-	            }
-	            catch(NotFoundException e)
-	            {
-	            	System.out.println("Did not find student record with id " + possibleId + ".\n");
-	            }
+	            System.out.println("\nStudents are encouraged to comment out the following try...catch block to"
+	            		+ " verify the new record exists in pgAdmin by running the \"SELECT * FROM Students;\" command ");
+
+	          //  try // now, attempt to delete the new Student
+	          //  {
+	          //  	System.out.println("\nAttempt to delete the new student record for "
+	          //  	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
+   			//			+ "(Id: " + mainStudent.getId() + ")");
+	        	//   		mainStudent.delete();
+	        //	   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
+	          //  }
+	         //   catch(NotFoundException e)
+	          //          {	System.out.println(e);}
+
+	         //   try // now, try to find the deleted Student
+	         //   {
+	         //   	possibleId = 100222222L;
+	          //      mainStudent = Student.retrieve(possibleId);
+	         //       mainStudent.dump();
+	          //      mainStudent.delete();
+	          //  }
+	         //   catch(NotFoundException e)
+	         //   {
+	        //    	System.out.println("Did not find student record with id " + possibleId + ".\n");
+	         //   }
+				possibleId = 100303769L;
+				System.out.println("\nAttempt to retrieve the student record for Nick Sturch-Flint(Id: " + possibleId + ")");
+
+				try // now, try to find Nick's student record
+				{
+
+					mainStudent = Student.retrieve(possibleId);
+					System.out.println("Student record with id " + possibleId + " retrieved from the database.\n");
+					mainStudent.dump();
+				}
+				catch(NotFoundException e)
+				{
+					System.out.println("Did not find student record with id " + possibleId + ".\n");
+				}
 			 }catch(Exception e){   //catch for database initialize/connect try
 				  System.out.println(e.toString());
 			 }finally{ // close the database resources, if possible            
@@ -121,12 +134,6 @@ public class Lab2Tester {
 			 }
 		}catch(InvalidUserDataException iude){
 			System.out.println(iude.getMessage());
-		} catch (InvalidNameException e) {
-			e.printStackTrace();
-		} catch (InvalidIdException e) {
-			e.printStackTrace();
-		} catch (InvalidPasswordException e) {
-			e.printStackTrace();
 		}
 	}
 }

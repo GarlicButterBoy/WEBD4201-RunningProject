@@ -1,11 +1,9 @@
 package webd4201.sturchflintn;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 
-import static java.lang.Double.*;
 
 /**
  * User class extends the college interface but also acts as the parent class to Faculty and Student user types
@@ -188,12 +186,9 @@ public class User implements CollegeInterface {
      * @param id            must be between a minimum and maximum
      * @exception InvalidIdException  is thrown if anything fails setting the ID
      */
-    public void setId(long id) //throws InvalidIdException
+    public void setId(long id) throws InvalidIdException
     {
 
-        this.id = id;
-
-        /*
         if (verifyId(id))
         {
             this.id = id;
@@ -202,7 +197,7 @@ public class User implements CollegeInterface {
         {
             throw new InvalidIdException(id + " must be the appropriate length (9 character).");
         }
-*/
+
     }
     /**
      * Method to set the password
@@ -400,7 +395,6 @@ public class User implements CollegeInterface {
 
     /**
      * Prints the object.
-     * @return the object as a String
      */
     public void dump()
     {
