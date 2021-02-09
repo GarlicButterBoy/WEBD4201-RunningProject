@@ -354,17 +354,8 @@ public class User implements CollegeInterface {
     /**
      * Default Constructor uses all of the default constants and the current date it is called
      */
-    public User()
-    {
-       this.id = DEFAULT_ID;
-       this.password = DEFAULT_PASSWORD;
-       this.firstName = DEFAULT_FIRST_NAME;
-       this.lastName = DEFAULT_LAST_NAME;
-       this.emailAddress = DEFAULT_EMAIL_ADDRESS;
-       this.lastAccess = new Date();
-       this.enrolDate = new Date();
-       this.enabled = true;
-       this.type = DEFAULT_TYPE;
+    public User() throws InvalidUserDataException {
+       this(DEFAULT_ID, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL_ADDRESS, new Date(), new Date(), true, DEFAULT_TYPE);
     }
 
     //Methods

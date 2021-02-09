@@ -40,10 +40,10 @@ public class DatabaseConnect
         }
         catch (ClassNotFoundException e)  //will occur if you did not import the PostGreSQL *.jar file with drivers
         {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
-        catch (SQLException e)	//any other database exception (misnamed db, misnamed user, worng password, etc)
-        { System.out.println(e); }
+        catch (SQLException e)	//any other database exception (misnamed db, misnamed user, wrong password, etc)
+        { System.out.println(e.getMessage()); }
         return aConnection;
     }
 
@@ -57,6 +57,6 @@ public class DatabaseConnect
             aConnection.close();
         }
         catch (SQLException e)
-        { System.out.println(e);	}
+        { System.out.println(e.getMessage());	}
     }
 }

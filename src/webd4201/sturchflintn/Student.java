@@ -247,7 +247,7 @@ public class Student extends User
      * @return          number of rows affected
      * @throws NotFoundException    throws an exception if the user cannot be found
      */
-    public  int update() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException {
+    public  int update() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException, SQLException {
         return StudentDA.update(this);
     }
 
@@ -256,7 +256,7 @@ public class Student extends User
      * @return          number of rows affected
      * @throws NotFoundException   throws an exception if the user cannot be found
      */
-    public int delete() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException {
+    public int delete() throws NotFoundException, InvalidUserDataException, InvalidIdException, InvalidNameException, InvalidPasswordException, SQLException {
         return  StudentDA.delete(this);
     }
 }

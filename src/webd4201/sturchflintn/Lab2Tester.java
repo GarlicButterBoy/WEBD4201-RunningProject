@@ -90,28 +90,28 @@ public class Lab2Tester {
 	            System.out.println("\nStudents are encouraged to comment out the following try...catch block to"
 	            		+ " verify the new record exists in pgAdmin by running the \"SELECT * FROM Students;\" command ");
 
-	          //  try // now, attempt to delete the new Student
-	          //  {
-	          //  	System.out.println("\nAttempt to delete the new student record for "
-	          //  	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
-   			//			+ "(Id: " + mainStudent.getId() + ")");
-	        	//   		mainStudent.delete();
-	        //	   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
-	          //  }
-	         //   catch(NotFoundException e)
-	          //          {	System.out.println(e);}
+	            try // now, attempt to delete the new Student
+	            {
+	            	System.out.println("\nAttempt to delete the new student record for "
+	            	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
+   						+ "(Id: " + mainStudent.getId() + ")");
+	        	   		mainStudent.delete();
+	        	   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
+	            }
+	            catch(NotFoundException e)
+	                    {	System.out.println(e);}
 
-	         //   try // now, try to find the deleted Student
-	         //   {
-	         //   	possibleId = 100222222L;
-	          //      mainStudent = Student.retrieve(possibleId);
-	         //       mainStudent.dump();
-	          //      mainStudent.delete();
-	          //  }
-	         //   catch(NotFoundException e)
-	         //   {
-	        //    	System.out.println("Did not find student record with id " + possibleId + ".\n");
-	         //   }
+	            try // now, try to find the deleted Student
+	            {
+	            	possibleId = 100222222L;
+	                mainStudent = Student.retrieve(possibleId);
+	                mainStudent.dump();
+	                mainStudent.delete();
+	            }
+	            catch(NotFoundException e)
+	            {
+	            	System.out.println("Did not find student record with id " + possibleId + ".\n");
+	            }
 				possibleId = 100303769L;
 				System.out.println("\nAttempt to retrieve the student record for Nick Sturch-Flint(Id: " + possibleId + ")");
 

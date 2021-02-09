@@ -113,7 +113,7 @@ public class StudentDA
      * This method checks the id against all in the DB
      * @param id      Checks the id of the potential new user against all existing users
      * @return Student  Object form of the data collected for a student
-     * @throws NotFoundException
+     * @throws NotFoundException    throws an exception if the user cannot be found
      */
     public static Student retrieve(long id) throws NotFoundException, SQLException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException { // retrieve Customer and Boat data
 
@@ -221,7 +221,7 @@ public class StudentDA
      * Method accepts a student object to be used to INSERT into the DB
      * @param aStudent      an object that contains student details
      * @return inserted     a boolean to tell if the insert passed/failed
-     * @throws InvalidUserDataException
+     * @throws InvalidUserDataException throws an exception if the user data is invalid
      */
     public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException {
         boolean inserted = false; //insertion success flag
@@ -309,23 +309,32 @@ public class StudentDA
      * Method that deletes a user and student from the DB
      * @param aStudent      object containing data
      * @return records      number of records changed
-     * @throws NotFoundException
+     * @throws NotFoundException     throws an exception if the user cannot be found
      */
-    public static int delete(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public static int delete(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException {
         int records = 0;
         // retrieve the id (key)
         id = aStudent.getId();
         // create the SQL delete statement
-        String sqlDeleteStudent = "DELETE FROM students " + "WHERE id = '" + id +"'";
-        String sqlDeleteUser = "DELETE FROM users " + "WHERE id = '" + id +"'";
+        String sqlDeleteStudent = "DELETE FROM students WHERE id = ?;";
+        String sqlDeleteUser = "DELETE FROM users WHERE id = ?;";
+        PreparedStatement sqlUserDelete = aConnection.prepareStatement(sqlDeleteUser);
+        PreparedStatement sqlStudentDelete = aConnection.prepareStatement(sqlDeleteStudent);
+        sqlUserDelete.setLong(1, id);
+        sqlStudentDelete.setLong(1, id);
+
 
         // see if this customer already exists in the database
         try
         {
             retrieve(id);  //used to determine if record exists for the passed Customer
+            //System.out.println(sqlUserQuery);
+            records = sqlStudentDelete.executeUpdate();
+            records = sqlUserDelete.executeUpdate();
+
             // if found, execute the SQL update statement
-            records = aStatement.executeUpdate(sqlDeleteStudent);
-            records = aStatement.executeUpdate(sqlDeleteUser);
+            //records = aStatement.executeUpdate(sqlDeleteStudent);
+            //records = aStatement.executeUpdate(sqlDeleteUser);
         }catch(NotFoundException e)
         {
             throw new NotFoundException("Student with id " + id
@@ -339,9 +348,9 @@ public class StudentDA
      * Method updates a user in both the users and students table
      * @param aStudent      object that contains data
      * @return records      number of records updated
-     * @throws NotFoundException
+     * @throws NotFoundException    throws an exception if the user cannot be found
      */
-    public static int update(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException {
+    public static int update(Student aStudent) throws NotFoundException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException {
         int records = 0;  //records updated in method
 
         // retrieve the student argument attribute values
@@ -358,34 +367,55 @@ public class StudentDA
         programDescription = aStudent.getProgramDescription();
         year = aStudent.getYear();
         marks = aStudent.getMarks();
+        java.sql.Date lastAccessDate = new java.sql.Date(lastAccess.getTime());
+        java.sql.Date ogEnrolDate = new java.sql.Date(enrolDate.getTime());
 
         // define the SQL query statement
-        String sqlUpdateUsers = "UPDATE users " +
-                "SET first_name = '" + firstName + "', " +
-                "last_name = '" + lastName + "', " +
-                "email_address = '" + emailAddress + "', " +
-                "last_access = '" + lastAccess + "', " +
-                "enrol_date = '" + enrolDate + "', " +
-                "type = '" + type + "', " +
-                "enabled = '" + enabled + "' " +
-                "WHERE id = '" + id + "';";
+        String sqlUpdateUser = "UPDATE users " +
+                "SET first_name = ?, " +
+                "last_name = ?, " +
+                "email_address = ?, " +
+                "last_access = ?, " +
+                "enrol_date = ?, " +
+                "type = ?, " +
+                "enabled = ? " +
+                "WHERE id = ?";
+        PreparedStatement sqlUserUpdate = aConnection.prepareStatement(sqlUpdateUser);
+        sqlUserUpdate.setString(1, firstName);
+        sqlUserUpdate.setString(2, lastName);
+        sqlUserUpdate.setString(3, emailAddress);
+        sqlUserUpdate.setDate(4, lastAccessDate);
+        sqlUserUpdate.setDate(5, ogEnrolDate);
+        sqlUserUpdate.setString(6, String.valueOf(type));
+        sqlUserUpdate.setBoolean(7, enabled);
+        sqlUserUpdate.setLong(8, id);
 
-        String sqlUpdateStudents = "UPDATE students " +
-                "SET program_code = '" + programCode + "', " +
-                "program_description = '" + programDescription + "', " +
-                "year = '" + year + "' " +
-                "WHERE id = '" + id + "';";
 
-       // System.out.println(sqlUpdateStudents);
-       // System.out.println(sqlUpdateUsers);
+
+
+        String sqlUpdateStudent = "UPDATE students " +
+                "SET program_code = ?, " +
+                "program_description = ?, " +
+                "year = ? " +
+                "WHERE id = ?";
+        PreparedStatement sqlStudentUpdate = aConnection.prepareStatement(sqlUpdateStudent);
+        sqlStudentUpdate.setString(1, programCode);
+        sqlStudentUpdate.setString(2, programDescription);
+        sqlStudentUpdate.setInt(3, year);
+        sqlStudentUpdate.setLong(4, id);
+
+
+
+        //System.out.println(sqlUpdateStudent);
+        //System.out.println(sqlUpdateUser);
         // see if this customer exists in the database
         // NotFoundException is thrown by find method
         try
         {
             retrieve(id);  //determine if there is a student record to be updated
             // if found, execute the SQL update statement
-            records = aStatement.executeUpdate(sqlUpdateUsers);
-            records = aStatement.executeUpdate(sqlUpdateStudents);
+            records = sqlUserUpdate.executeUpdate();
+            records = sqlStudentUpdate.executeUpdate();
         }catch(NotFoundException e)
         {
             throw new NotFoundException("Student with id " + id
