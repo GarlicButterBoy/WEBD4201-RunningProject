@@ -1,5 +1,6 @@
 package webd4201.sturchflintn;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -238,7 +239,7 @@ public class Student extends User
      * @return aStudent   Object containing the relevant data
      * @throws InvalidUserDataException  throws an exception if the user data entry is invalid
      */
-    public boolean create() throws InvalidUserDataException, DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, SQLException {
+    public boolean create() throws InvalidUserDataException, DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, SQLException, NoSuchAlgorithmException {
         return StudentDA.create(this);
     }
 

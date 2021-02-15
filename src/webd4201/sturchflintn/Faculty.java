@@ -78,8 +78,7 @@ public class Faculty extends User
     /**
      * DEFAULT CONSTRUCTOR uses the parent class constructor then uses the faculty defaults to build a basic instance
      */
-    public Faculty()
-    {
+    public Faculty() throws InvalidUserDataException {
         super();
         setSchoolCode(DEFAULT_SCHOOL_CODE);
         setSchoolDescription(DEFAULT_SCHOOL_DESCRIPTION);

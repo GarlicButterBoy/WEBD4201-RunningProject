@@ -6,6 +6,8 @@
  */
 package webd4201.sturchflintn;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -223,7 +225,11 @@ public class StudentDA
      * @return inserted     a boolean to tell if the insert passed/failed
      * @throws InvalidUserDataException throws an exception if the user data is invalid
      */
-    public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException {
+    public static boolean create(Student aStudent) throws DuplicateException, InvalidIdException, InvalidNameException, InvalidPasswordException, InvalidUserDataException, SQLException, NoSuchAlgorithmException {
+
+        //MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+
+
         boolean inserted = false; //insertion success flag
         // retrieve the student attribute values
         id = aStudent.getId();
@@ -246,9 +252,11 @@ public class StudentDA
                 "VALUES ('" + id + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + lastAccess
                 + "', '" + enrolDate + "', '" + enabled + "', '" + type
                + "');";
+        //TODO: Update insert stmt to use encoded password
+        //messageDigest.update(Byte.parseByte(password));
         //Prepare the user table statement
         PreparedStatement sqlUserQuery = aConnection.prepareStatement("INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                "VALUES (?, ENCODE(DIGEST((?), 'sha1'), 'hex'), ?, ?, ?, ?, ?, ?, ?);");
         //Prepare the student table statement
         PreparedStatement sqlStudentQuery = aConnection.prepareStatement("INSERT INTO students (id, program_code, program_description, year) " +
                 "VALUES (?, ?, ?, ?);");
