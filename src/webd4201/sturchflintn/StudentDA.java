@@ -247,23 +247,19 @@ public class StudentDA
         marks = aStudent.getMarks();
         java.sql.Date lastAccessDate = new java.sql.Date(lastAccess.getTime());
         java.sql.Date ogEnrolDate = new java.sql.Date(enrolDate.getTime());
+        String hashword = aStudent.hashPassword(password);
         // create the SQL insert statement using attribute values
-        String sqlInsertUser = "INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
-                "VALUES ('" + id + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + lastAccess
-                + "', '" + enrolDate + "', '" + enabled + "', '" + type
-               + "');";
-        //TODO: Update insert stmt to use encoded password
         //messageDigest.update(Byte.parseByte(password));
         //Prepare the user table statement
         PreparedStatement sqlUserQuery = aConnection.prepareStatement("INSERT INTO users (id, password, first_name, last_name, email_address, last_access, enrol_date, enabled, type) " +
-                "VALUES (?, ENCODE(DIGEST((?), 'sha1'), 'hex'), ?, ?, ?, ?, ?, ?, ?);");
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
         //Prepare the student table statement
         PreparedStatement sqlStudentQuery = aConnection.prepareStatement("INSERT INTO students (id, program_code, program_description, year) " +
                 "VALUES (?, ?, ?, ?);");
 
         //Set the appropriate values for the student prepared statement
         sqlUserQuery.setLong(1, id);
-        sqlUserQuery.setString(2, password);
+        sqlUserQuery.setString(2, hashword);
         sqlUserQuery.setString(3, firstName);
         sqlUserQuery.setString(4, lastName);
         sqlUserQuery.setString(5, emailAddress);

@@ -32,6 +32,8 @@ public class Lab2Tester {
 			mainStudent = new Student(possibleId,"password", "Robert", "McReady", "bob.mcready@dcmail.ca",
 					enrol, lastAccess, true, 's', "CPA", "Computer Programmer Analyst", 3);
 			//mainStudent.dump();
+			System.out.println(User.hashPassword(mainStudent.getPassword()));
+
 			try{
 				
 	            // initialize the database (i.e. create a database connection)
@@ -55,7 +57,9 @@ public class Lab2Tester {
 	            	dbStudent = Student.retrieve(possibleId);
 	            	System.out.println("Student record with id " + possibleId + " retrieved from the database\n");
 	            	dbStudent.dump();
-	            }
+					System.out.println(User.hashPassword(dbStudent.getPassword()));
+
+				}
 	            catch(NotFoundException e)
 	            {	System.out.println(e.getMessage());}
 
@@ -65,7 +69,9 @@ public class Lab2Tester {
 	            						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
 	            						+ "(Id: " + mainStudent.getId()+")");
 	            	mainStudent.create();
-	            	mainStudent.dump();
+					System.out.println(User.hashPassword(mainStudent.getPassword()));
+
+					mainStudent.dump();
 	                System.out.println("Student record added to the database.\n");
 	            }
 	            catch(DuplicateException e)
@@ -92,12 +98,12 @@ public class Lab2Tester {
 
 	         //   try // now, attempt to delete the new Student
 	         //   {
-	         //   	System.out.println("\nAttempt to delete the new student record for "
-	         //   	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
+	          //  	System.out.println("\nAttempt to delete the new student record for "
+	          //  	   						+ mainStudent.getFirstName() + " " + mainStudent.getLastName()
    			//			+ "(Id: " + mainStudent.getId() + ")");
-	        ///	   		mainStudent.delete();
-	        //	   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
-	         //   }
+	        //	   		mainStudent.delete();
+	        	//   	System.out.println("Student record with id " + mainStudent.getId() + " successfully removed from the database.\n");
+	        //    }
 	        //    catch(NotFoundException e)
 	        //            {	System.out.println(e);}
 
@@ -121,6 +127,9 @@ public class Lab2Tester {
 					mainStudent = Student.retrieve(possibleId);
 					System.out.println("Student record with id " + possibleId + " retrieved from the database.\n");
 					mainStudent.dump();
+					System.out.println(User.hashPassword(dbStudent.getPassword()));
+
+					System.out.println(User.hashPassword(mainStudent.getPassword()));
 				}
 				catch(NotFoundException e)
 				{
@@ -135,6 +144,7 @@ public class Lab2Tester {
 		}catch(InvalidUserDataException iude){
 			System.out.println(iude.getMessage());
 		}
+
 	}
 }
 
